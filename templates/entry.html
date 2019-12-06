@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Entry
+{% endblock %}
+
+{% block main %}
+<div class="entry-parallax">
+    <div class="container p-5">
+        <div class="card" style="width: 36rem; display: inline-block;">
+            <form action="/entry" method="post" style="display: inline-block;">
+                <br>
+                <h5 class="card-title">Add an Activity</h5>
+                <div class="form-group">
+                    <input autocomplete="off" autofocus class="form-control" name="activity" placeholder="Activity" type="text">
+                </div>
+                <div class="form-group">
+                    Start time: <input autocomplete="off" class="form-control" name="start" type="time">
+                </div>
+                <div class="form-group">
+                    End time: <input autocomplete="off" class="form-control" name="end" type="time">
+                </div>
+                <div class="form-group">
+                    Date: <input autocomplete="off" class="form-control" name="date" type="date">
+                </div>
+
+                <div class="form-group">
+                    <select class="form-control" name="category">
+                        <option disabled selected value="">Category</option>
+                            <option value="Class">Class</option>
+                            <option value="Schoolwork">Schoolwork</option>
+                            <option value="Extracurricular">Extracurricular</option>
+                            <option value="Work">Work</option>
+                            <option value="Exercise">Exercise</option>
+                            <option value="Food">Food</option>
+                            <option value="Sleep">Sleep</option>
+                            <option value="Fun">Fun</option>
+                            <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    Rate the activity:
+                    <td><input type="radio" name="rating" value="liked">Liked</td>
+                    <td><input type="radio" name="rating" value="neutral">Neutral</td>
+                    <td><input type="radio" name="rating" value="disliked">Disliked</td>
+                </div>
+                <div class="form-group">
+                    <textarea rows="4" cols="50" name="notes" placeholder="Notes (optional)"></textarea>
+                </div>
+                <button class="btn btn-primary" type="submit">Add</button>
+                <br>
+                <br>
+            </form>
+            <br>
+        </div>
+        <br>
+        <br>
+        <br>
+        <br>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,221 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+
+<div class="timelog-parallax">
+    <link href='static/tablesort-gh-pages/tablesort.css' rel='stylesheet'>
+    <div class="container p-5">
+        <div class="card" style="width: 60rem; display: inline-block;">
+            <br>
+            <form action="/timelog" method="post">
+                <div class="form-group">
+                    <input autocomplete="off" class="form-control" name="date" type="date">
+                    <br><br>
+                    <button class="btn btn-primary" type="submit">Select</button>
+                </div>
+            </form>
+            <br>
+            <h3>Journal: {{ date }}</h3>
+            <br>
+            <table id="activitytable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Activity</th>
+                        <th>Category</th>
+                        <th>Time Spent</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for entry in rows %}
+                    <tr>
+                        <td>{{ entry["name"] }}</td>
+                        <td>{{ entry["category"] }}</td>
+                        {% if entry["timespent"] == 1 %}
+                            <td>{{ entry["timespent"] }} hour</td>
+                        {% elif entry["timespent"] > 1 %}
+                            <td>{{ entry["timespent"] }} hours</td>
+                        {% elif entry["timespent"] < 1 %}
+                            <td>{{ entry["minutes"] }} minutes</td>
+                            <!--{% if entry["timespent"] == 0.25 %}-->
+                            <!--    <td>15 minutes</td>-->
+                            <!--{% elif entry["timespent"] == 0.5 or 0.50 %}-->
+                            <!--    <td>30 minutes</td>-->
+                            <!--{% elif entry["timespent"] == 0.75 %}-->
+                            <!--<td>45 minutes</td>-->
+                            <!--{% endif %}-->
+                        {% endif %}
+                        <td>{{ entry["notes"] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            <br>
+
+            <button class="btn btn-primary" onclick="showSummary()" id="button_summary">Show Summary</button>
+
+            <!--Get raw pie chart data, hide it from user-->
+            <p id="data" style="display: none">{{ pie_data }}</p>
+            <!--Summary-->
+            <div id="summary" style="display: none">
+                <!--Pie Chart: Visualize how you are spending your time.-->
+                <div id="piechart" style="width: 900px; height: 500px;"></div>
+                <!--Table breakdown-->
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Total Time Spent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in summary_rows %}
+                        <tr>
+                            <td>{{ row["category"] }}</td>
+                            {% if row["total"] == 1 %}
+                                <td>{{ row["total"] }} hour</td>
+                            {% elif row["total"] > 1 %}
+                                <td>{{ row["total"] }} hours</td>
+                            {% elif row["total"] < 1 %}
+                                <td>{{ row["minutes"] }} minutes</td>
+                            <!--    {% if row["total"] == 0.25 %}-->
+                            <!--        <td>15 minutes</td>-->
+                            <!--    {% elif row["total"] == 0.5 or 0.50 %}-->
+                            <!--        <td>30 minutes</td>-->
+                            <!--    {% elif row["total"] == 0.75 %}-->
+                            <!--    <td>45 minutes</td>-->
+                            <!--    {% endif %}-->
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+            <br>
+            <br>
+            <!--Advice-->
+            <button class="btn btn-primary" onclick="showAdvice()" id="button_advice">Show Advice</button>
+            <div id="advice" style="display: none">
+                <br>
+                <h3>Advice</h3>
+                <br>
+                <!-- Slideshow container -->
+                <div class="slideshow-container">
+                    <!-- Full-width slides/quotes -->
+                    {% for advice in list_of_advice %}
+                    <div class="mySlides">
+                        <q>{{ advice }}</q>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Next/prev buttons -->
+                    <a class="prev" onclick="plusSlides(-1)" style="display: block">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1)" style="display: block">&#10095;</a>
+                </div>
+            </div>
+            <br>
+            <br>
+        </div>
+        <br>
+        <br>
+    </div>
+    <br>
+    <br>
+</div>
+
+
+<!--Tablesort: https://github.com/tristen/tablesort/blob/gh-pages/test/index.html-->
+<script src='static/tablesort-gh-pages/dist/tablesort.min.js'></script>
+
+ <!--Include sort types you need-->
+<script src='static/tablesort-gh-pages/src/sorts/tablesort.number.js'></script>
+<script src='static/tablesort-gh-pages/src/sorts/tablesort.date.js'></script>
+
+<!--Make table sortable-->
+<script>
+  table = document.getElementById('activitytable');
+  new Tablesort(table);
+</script>
+
+<!--Show/hide summary controls-->
+<script>
+    function showSummary() {
+      var x = document.getElementById("summary");
+      var pie = document.getElementById("piechart")
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+      if (x.style.display === "none") {
+        x.style.display = "block";
+        pie.style.display = "inline-block";
+        document.getElementById("button_summary").innerHTML = "Hide Summary"
+      } else {
+        x.style.display = "none";
+        pie.style.display = "none";
+        document.getElementById("button_summary").innerHTML = "Show Summary"
+      }
+    }
+
+    function showAdvice() {
+      var x = document.getElementById("advice");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+        document.getElementById("button_advice").innerHTML = "Hide Advice"
+      } else {
+        x.style.display = "none";
+        document.getElementById("button_advice").innerHTML = "Show Advice"
+      }
+    }
+
+    // Slides: https://www.w3schools.com/howto/howto_js_quotes_slideshow.asp
+    var slideIndex = 1;
+    showSlides(slideIndex);
+
+    function plusSlides(n) {
+      showSlides(slideIndex += n);
+    }
+
+    function currentSlide(n) {
+      showSlides(slideIndex = n);
+    }
+
+    function showSlides(n) {
+      var i;
+      var slides = document.getElementsByClassName("mySlides");
+      if (n > slides.length)
+      {
+          slideIndex = 1
+      }
+        if (n < 1) {slideIndex = slides.length}
+        for (i = 0; i < slides.length; i++) {
+          slides[i].style.display = "none";
+        }
+
+      slides[slideIndex-1].style.display = "block";
+    }
+</script>
+
+<!--Draw pie chart-->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  function drawChart() {
+    var info = document.getElementById("data").innerHTML;
+    // console.log(info);
+    var obj  = JSON.parse(info);
+    // alert(typeof obj);
+    var data = google.visualization.arrayToDataTable(obj);
+    var options = {
+      title: 'Activities Summary'
+    };
+    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+    chart.draw(data, options);
+  }
+</script>
+
+{% endblock %}

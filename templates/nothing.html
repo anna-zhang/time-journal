@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+<div class="timelog-parallax">
+    <div class="container p-5">
+        <div class="card" style="width: 40rem; display: inline-block;">
+            <br>
+            <br>
+            <form action="/timelog" method="post">
+                <div class="form-group">
+                    <input autocomplete="off" class="form-control" name="date" type="date">
+                    <br><br>
+                    <button class="btn btn-primary" type="submit">Select</button>
+                </div>
+            </form>
+            <br>
+            <h3>Journal: {{ date }}</h3>
+            <br>
+            <p>No entries to display.</p>
+            <br>
+            <a href="entry">Add an Entry</a>
+            <br>
+            <br>
+            <br>
+        </div>
+    </div>
+</div>
+{% endblock %}
