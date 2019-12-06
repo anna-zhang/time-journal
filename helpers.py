@@ -6,6 +6,7 @@ import datetime
 from flask import redirect, render_template, request, session
 from functools import wraps
 
+
 def current_date():
     d = datetime.datetime.today()
     date = d.strftime('%Y-%m-%d')
@@ -22,9 +23,12 @@ def timespent(start, end):
     if seconds < 0:
         seconds = seconds + 86400
     minutes = seconds / 60
+
     minutes = round(minutes, 2)
     return(minutes)
 
+# print(timespent("20:30", "01:30"))
+# print(timespent("20:30", "22:30"))
 
 
 def apology(message, code=400):
