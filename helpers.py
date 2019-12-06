@@ -19,8 +19,9 @@ def timespent(start, end):
     # returns a timedelta object
     duration = end_time - start_time
     seconds = datetime.timedelta.total_seconds(duration)
+    if seconds < 0:
+        seconds = seconds + 86400
     minutes = seconds / 60
-
     minutes = round(minutes, 2)
     return(minutes)
 
