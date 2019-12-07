@@ -236,6 +236,7 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
+        print(session)
 
         # Redirect user to timelog
         return redirect("/timelog")
